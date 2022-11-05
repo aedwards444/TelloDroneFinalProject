@@ -23,13 +23,13 @@ print(classNames)
 
 
 #Initialize the Drone
-tello = Tello()
-tello.connect()
-tello.takeoff()
+#tello = Tello()
+#tello.connect()
+#tello.takeoff()
 
 
 # Initialize the webcam
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 
 
@@ -56,7 +56,7 @@ while True:
         landmarks = []
         for handslms in result.multi_hand_landmarks:
             for lm in handslms.landmark:
-                print(id, lm)
+                #print(id, lm)
                 lmx = int(lm.x * x)
                 lmy = int(lm.y * y)
 
@@ -77,6 +77,25 @@ while True:
     if(className == "fist"):
         print("This is a fist")
         #tello.land()
+    elif(className == "peace"):
+        print("This is a peace sign")
+    elif(className == "okay"):
+        print("This is a okay sign")
+    elif(className == "thumbs up"):
+        print("This is a thumbs up")
+    elif(className == "thumbs down"):
+        print("This is a thumbs down")
+    elif(className == "call me"):
+        print("This is a call me sign")
+    elif(className == "stop"):
+        print("This is a stop sign")
+    elif(className == "rock"):
+        print("This is a rock sign")
+    elif(className == "live long"):
+        print("This is a okay sign")
+    elif(className == "smile"):
+        print("This is a smile sign")
+   
     # Show the final output
     cv2.imshow("Output", frame) 
 
