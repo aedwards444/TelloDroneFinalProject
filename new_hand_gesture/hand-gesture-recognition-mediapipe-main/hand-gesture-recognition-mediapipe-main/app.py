@@ -141,12 +141,20 @@ def main():
 
                 # Hand sign classification
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
-                if hand_sign_id == 2:  # Point gesture
-                    point_history.append(landmark_list[8])
-                else:
-                    point_history.append([0, 0])
+                
+                xy1 = landmark_list[8]
+                xy2 = landmark_list[8]
+                print(xy1[0])
+
+
+                # if hand_sign_id == 2:  # Point gesture
+                #     point_history.append(landmark_list[8])
+                # else:
+                #     point_history.append([0, 0])
 
                 # Finger gesture classification
+   
+                
                 finger_gesture_id = 0
                 point_history_len = len(pre_processed_point_history_list)
                 if point_history_len == (history_length * 2):
@@ -157,7 +165,8 @@ def main():
                 finger_gesture_history.append(finger_gesture_id)
                 most_common_fg_id = Counter(
                     finger_gesture_history).most_common()
-
+                
+                
                 # Drawing part
                 debug_image = draw_bounding_rect(use_brect, debug_image, brect)
                 debug_image = draw_landmarks(debug_image, landmark_list)

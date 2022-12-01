@@ -7,6 +7,7 @@ import itertools
 from collections import Counter
 from collections import deque
 
+import time
 import cv2 as cv
 import numpy as np
 import mediapipe as mp
@@ -43,7 +44,6 @@ def main():
     # Argument parsing #################################################################
     args = get_args()
 
-    cap_device = args.device
     cap_width = args.width
     cap_height = args.height
 
@@ -58,8 +58,7 @@ def main():
     tello = Tello()
     tello.connect()
     tello.streamon()
-    tello.streamon()
-
+    print(tello.get_battery())
     
 
     # Model load #############################################################
@@ -102,6 +101,10 @@ def main():
 
     #  ########################################################################
     mode = 0
+    
+    #################Take flight ###################
+    tello.takeoff()
+    tello.move_up(75)
 
     while True:
         fps = cvFpsCalc.get()
@@ -146,30 +149,37 @@ def main():
 
                 # Hand sign classification
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
-                if hand_sign_id == 2:  # Point gesture
-                    point_history.append(landmark_list[8])
-                        
-                    xy1 = point_history[0]
-                    xy2 = point_history[1]
-                    
+                print(hand_sign_id)
+                print(hand_sign_id)
+                if hand_sign_id == 0:
+                    tello.move_back(40)
+                elif hand_sign_id == 4:
+                    tello.land()
+                elif hand_sign_id == 5:
+                    tello.move_forward(40)
+                elif hand_sign_id == 2:
+                    xy1 = landmark_list[8]
+                    print('xy1=', xy1)
+                    time.sleep(.25)
+
+                    xy2 = landmark_list[8]
+                    print('xy2=', xy2)
                     if xy1[0] > xy2[0]:
                         print('moving left')
-                    elif xy1[0] < xy2[0]:
-                        print('moving right')
-                        
-                    if xy1[1] > xy2[1]:
-                        print('moving up')
-                    elif xy1[1] < xy2[1]:
-                        print('moving down')
+                        print(xy1 - xy2)
+                        tello.move_left(40)
                     
-                    
-                    #####################print(point_history)
-                    #####################this can be used for real time tracking
-                    
-                else:
-                    point_history.append([0, 0])
+                hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+
+
+                # if hand_sign_id == 2:  # Point gesture
+                #     point_history.append(landmark_list[8])
+                # else:
+                #     point_history.append([0, 0])
 
                 # Finger gesture classification
+   
+                
                 finger_gesture_id = 0
                 point_history_len = len(pre_processed_point_history_list)
                 if point_history_len == (history_length * 2):
@@ -180,7 +190,7 @@ def main():
                 finger_gesture_history.append(finger_gesture_id)
                 most_common_fg_id = Counter(
                     finger_gesture_history).most_common()
-
+                
                 # Drawing part
                 debug_image = draw_bounding_rect(use_brect, debug_image, brect)
                 debug_image = draw_landmarks(debug_image, landmark_list)
