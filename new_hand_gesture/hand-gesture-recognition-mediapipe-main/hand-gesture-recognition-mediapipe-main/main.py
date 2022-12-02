@@ -53,7 +53,7 @@ def main():
 
     use_brect = True
 
-    # Camera preparation ###############################################################
+    # Camera preparation and Drone activation ###############################################################
 
     tello = Tello()
     tello.connect()
@@ -106,6 +106,12 @@ def main():
     tello.takeoff()
     tello.move_up(75)
 
+
+
+    #################Begin Hand Recognition ##########################
+    
+    
+    
     while True:
         fps = cvFpsCalc.get()
 
@@ -150,27 +156,78 @@ def main():
                 # Hand sign classification
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
                 print(hand_sign_id)
-                print(hand_sign_id)
-                if hand_sign_id == 0:
+
+                # Initialize queue for finger tracking
+                if hand_sign_id == 0: # Palm                       
                     tello.move_back(40)
-                elif hand_sign_id == 4:
+                elif hand_sign_id == 4: # OK
                     tello.land()
-                elif hand_sign_id == 5:
+                elif hand_sign_id == 5: # BackHand
                     tello.move_forward(40)
-                elif hand_sign_id == 2:
-                    xy1 = landmark_list[8]
-                    print('xy1=', xy1)
-                    time.sleep(.25)
-
-                    xy2 = landmark_list[8]
-                    print('xy2=', xy2)
-                    if xy1[0] > xy2[0]:
-                        print('moving left')
-                        print(xy1 - xy2)
-                        tello.move_left(40)
                     
-                hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+                ######### Finger point tracking  testing ###########################################
+                
 
+                elif hand_sign_id == 2:  # Point gesture
+                
+                    # Append point finger (x, y) location to a deque
+                    point_history.append(landmark_list[8]) 
+                    
+                    while hand_sign_id == 2 and len(point_history) > 1:
+                        
+                        first_pop = point_history.popleft()
+                        second_pop = point_history.popleft()
+                        
+                        # Ensure the movement range will be within boundaries
+                        if 50 > (first_pop[0] - second_pop[0]) > 20: 
+                            print('moving right:', first_pop[0] - second_pop[0])
+                            tello.move_right(first_pop[0] - second_pop[0])
+                            
+                        elif 50 > (second_pop[0] - first_pop[0]) > 20:
+                            print('moving left:', second_pop[0] - first_pop[0])
+                            tello.move_left(second_pop[0] - first_pop[0])
+                            
+                        if 50 > (first_pop[1] - second_pop[1]) > 20:
+                            print('moving up:', first_pop[1] - second_pop[1])
+                            tello.move_up(first_pop[1] - second_pop[1])
+                            
+                        elif 50 > (second_pop[1] - first_pop[1]) > 20:
+                            print('moving down:', second_pop[1] - first_pop[1])
+                            tello.move_down(second_pop[1] - first_pop[1])
+                    
+                    
+                    
+                    
+                    
+                    
+            ##################### Working Finger Point tracking #################
+            
+                    # Append point finger (x, y) location to a deque
+                    # point_history.append(landmark_list[8]) 
+                    # # We need two points to compare
+                    # if len(point_history) > 1: 
+                    #     first_pop = point_history.popleft()
+                    #     second_pop = point_history.popleft()
+                    #     if not first_pop == second_pop:
+                    #         # Ensure the movement range will be within boundaries
+                    #         if 50 > (first_pop[0] - second_pop[0]) > 20: 
+                    #             print('moving right:', first_pop[0] - second_pop[0])
+                    #             tello.move_right(first_pop[0] - second_pop[0])
+                    #         elif 50 > (second_pop[0] - first_pop[0]) > 20:
+                    #             print('moving left:', second_pop[0] - first_pop[0])
+                    #             tello.move_left(second_pop[0] - first_pop[0])
+                    #         if 50 > (first_pop[1] - second_pop[1]) > 20:
+                    #             print('moving up:', first_pop[1] - second_pop[1])
+                    #             tello.move_up(first_pop[1] - second_pop[1])
+                    #         elif 50 > (second_pop[1] - first_pop[1]) > 20:
+                    #             print('moving down:', second_pop[1] - first_pop[1])
+                    #             tello.move_down(second_pop[1] - first_pop[1])
+      
+                ########### End finger point tracking #############################################
+                
+                
+
+                    
 
                 # if hand_sign_id == 2:  # Point gesture
                 #     point_history.append(landmark_list[8])
@@ -213,6 +270,11 @@ def main():
     tello.streamoff()
     cv.destroyAllWindows()
 
+
+
+
+
+############ End hand recognition ####################
 
 def select_mode(key, mode):
     number = -1

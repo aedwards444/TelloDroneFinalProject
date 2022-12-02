@@ -142,16 +142,24 @@ def main():
                 # Hand sign classification
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
                 
-                xy1 = landmark_list[8]
-                xy2 = landmark_list[8]
-                print(xy1[0])
+                print(hand_sign_id)
+                if hand_sign_id == 2:  # Point gesture
+                    point_history.append(landmark_list[8])
+                    if len(point_history) > 1:
+                        first_pop = point_history.popleft()
+                        second_pop = point_history.popleft()
+                        if not first_pop == second_pop:
+                            if 50 > first_pop[0] - second_pop[0] > 20:
+                                print('moving left:', first_pop[0] - second_pop[0])
+                            elif 50 > second_pop[0] - first_pop[0] > 20:
+                                print('moving right:', second_pop[0] - first_pop[0]) 
 
-
-                # if hand_sign_id == 2:  # Point gesture
-                #     point_history.append(landmark_list[8])
-                # else:
-                #     point_history.append([0, 0])
-
+            
+                        
+                else:
+                    point_history.append([0, 0])
+                    
+    
                 # Finger gesture classification
    
                 
