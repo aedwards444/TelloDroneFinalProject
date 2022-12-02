@@ -194,40 +194,10 @@ def main():
                         elif 50 > (second_pop[1] - first_pop[1]) > 20:
                             print('moving down:', second_pop[1] - first_pop[1])
                             tello.move_down(second_pop[1] - first_pop[1])
+                        else:
+                            point_history.clear()
                     
-                    
-                    
-                    
-                    
-                    
-            ##################### Working Finger Point tracking #################
-            
-                    # Append point finger (x, y) location to a deque
-                    # point_history.append(landmark_list[8]) 
-                    # # We need two points to compare
-                    # if len(point_history) > 1: 
-                    #     first_pop = point_history.popleft()
-                    #     second_pop = point_history.popleft()
-                    #     if not first_pop == second_pop:
-                    #         # Ensure the movement range will be within boundaries
-                    #         if 50 > (first_pop[0] - second_pop[0]) > 20: 
-                    #             print('moving right:', first_pop[0] - second_pop[0])
-                    #             tello.move_right(first_pop[0] - second_pop[0])
-                    #         elif 50 > (second_pop[0] - first_pop[0]) > 20:
-                    #             print('moving left:', second_pop[0] - first_pop[0])
-                    #             tello.move_left(second_pop[0] - first_pop[0])
-                    #         if 50 > (first_pop[1] - second_pop[1]) > 20:
-                    #             print('moving up:', first_pop[1] - second_pop[1])
-                    #             tello.move_up(first_pop[1] - second_pop[1])
-                    #         elif 50 > (second_pop[1] - first_pop[1]) > 20:
-                    #             print('moving down:', second_pop[1] - first_pop[1])
-                    #             tello.move_down(second_pop[1] - first_pop[1])
-      
-                ########### End finger point tracking #############################################
-                
-                
-
-                    
+                        
 
                 # if hand_sign_id == 2:  # Point gesture
                 #     point_history.append(landmark_list[8])
